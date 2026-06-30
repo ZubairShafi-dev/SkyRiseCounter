@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Live Countdown — SkyRise Future</title>
+  <meta name="description" content="SkyRise Future is launching soon. Join the next generation global investment platform in the next 24 hours.">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Inter Google Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            outfit: ['Outfit', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* SkyRise Theme Custom Properties */
+    :root {
+      --primary-color: #00693e;
+      --primary-rgb: 0, 105, 62;
+      --accent-color: #f3ba2f;
+      --accent-rgb: 243, 186, 47;
+      
+      --gradient-liquid-bg:
+        radial-gradient(circle at 10% 8%, rgba(0, 168, 107, 0.10), transparent 28%),
+        radial-gradient(circle at 88% 12%, rgba(243, 186, 47, 0.08), transparent 30%),
+        radial-gradient(circle at 68% 88%, rgba(0, 105, 62, 0.08), transparent 34%),
+        radial-gradient(circle at 50% 50%, rgba(0, 229, 160, 0.04), transparent 60%),
+        linear-gradient(160deg, #eef4f1 0%, #e8f1ec 45%, #e6f0ea 100%);
+      
+      --card-bg: rgba(248, 253, 249, 0.45);
+      --card-border: rgba(0, 105, 62, 0.15);
+      --card-fg: #051409;
+      --text-muted: #52665b;
+      --digit-bg: #ffffff;
+      --digit-border: rgba(0, 105, 62, 0.1);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --primary-color: #00e676;
+        --primary-rgb: 0, 230, 118;
+        --accent-color: #f3ba2f;
+        --accent-rgb: 243, 186, 47;
+        
+        --gradient-liquid-bg:
+          radial-gradient(circle at 12% 10%, rgba(0, 230, 118, 0.14), transparent 28%),
+          radial-gradient(circle at 88% 15%, rgba(243, 186, 47, 0.10), transparent 32%),
+          radial-gradient(circle at 70% 85%, rgba(0, 105, 62, 0.12), transparent 34%),
+          radial-gradient(circle at 45% 50%, rgba(0, 168, 107, 0.06), transparent 55%),
+          linear-gradient(160deg, #030d07 0%, #060f08 45%, #04100a 100%);
+        
+        --card-bg: rgba(8, 20, 7, 0.45);
+        --card-border: rgba(0, 230, 118, 0.12);
+        --card-fg: #e2f0ea;
+        --text-muted: #94b2a3;
+        --digit-bg: #030d07;
+        --digit-border: rgba(0, 230, 118, 0.15);
+      }
+    }
+
+    body {
+      background: var(--gradient-liquid-bg);
+      color: var(--card-fg);
+    }
+
+    /* Animation Keyframes */
+    @keyframes liquidMorph1 {
+      0%, 100% { transform: translate(0px, 0px) scale(1) rotate(0deg); }
+      33% { transform: translate(60px, -80px) scale(1.2) rotate(120deg); }
+      66% { transform: translate(-40px, 40px) scale(0.85) rotate(240deg); }
+    }
+    @keyframes liquidMorph2 {
+      0%, 100% { transform: translate(0px, 0px) scale(1.1) rotate(0deg); }
+      50% { transform: translate(-60px, 70px) scale(0.9) rotate(-180deg); }
+    }
+    @keyframes floatUp {
+      0% {
+        transform: translateY(105vh) translateX(0) scale(0.8);
+        opacity: 0;
+      }
+      15% {
+        opacity: 0.35;
+      }
+      85% {
+        opacity: 0.35;
+      }
+      100% {
+        transform: translateY(-10vh) translateX(40px) scale(1.2);
+        opacity: 0;
+      }
+    }
+    @keyframes orbitBreathe {
+      0%, 100% { 
+        opacity: 0.15; 
+        transform: scale(0.96) rotate(0deg); 
+      }
+      50% { 
+        opacity: 0.45; 
+        transform: scale(1.04) rotate(180deg); 
+        border-color: var(--primary-color);
+      }
+    }
+    @keyframes orbitBreatheReverse {
+      0%, 100% { 
+        opacity: 0.30; 
+        transform: scale(1.05) rotate(0deg); 
+      }
+      50% { 
+        opacity: 0.06; 
+        transform: scale(0.95) rotate(-180deg); 
+        border-color: var(--accent-color);
+      }
+    }
+    @keyframes timerPulse {
+      0%, 100% { 
+        filter: drop-shadow(0 0 8px rgba(var(--primary-rgb), 0.1));
+        opacity: 0.85;
+      }
+      50% { 
+        filter: drop-shadow(0 0 20px rgba(var(--primary-rgb), 0.3));
+        opacity: 1;
+      }
+    }
+    @keyframes blinkSmooth {
+      0%, 100% { opacity: 0.2; }
+      50% { opacity: 1; }
+    }
+
+    .animate-liquid-1 {
+      animation: liquidMorph1 22s ease-in-out infinite;
+    }
+    .animate-liquid-2 {
+      animation: liquidMorph2 26s ease-in-out infinite;
+    }
+    .animate-float-particle {
+      animation: floatUp 20s linear infinite;
+      border-radius: 50%;
+    }
+    .breathe-ring-1 {
+      animation: orbitBreathe 8s ease-in-out infinite;
+    }
+    .breathe-ring-2 {
+      animation: orbitBreatheReverse 12s ease-in-out infinite;
+    }
+    .animate-timer-pulse {
+      animation: timerPulse 1s ease-in-out infinite;
+    }
+    .animate-smooth-blink {
+      animation: blinkSmooth 1s infinite;
+    }
+
+    .bg-custom-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+    }
+    .text-custom-muted {
+      color: var(--text-muted);
+    }
+    .bg-custom-digit {
+      background: var(--digit-bg);
+      border: 1px solid var(--digit-border);
+    }
+    .border-custom {
+      border-color: var(--card-border);
+    }
+    .bg-primary-gradient {
+      background: linear-gradient(135deg, var(--primary-color) 0%, #00a86b 100%);
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between relative overflow-x-hidden font-sans pb-12 select-none">
+
+  <!-- Floating Liquid Background Mesh Orbs -->
+  <div class="absolute top-10 left-10 w-[450px] h-[450px] rounded-full blur-[100px] pointer-events-none animate-liquid-1 z-0" style="background: rgba(var(--primary-rgb), 0.1);"></div>
+  <div class="absolute bottom-10 right-10 w-[450px] h-[450px] rounded-full blur-[100px] pointer-events-none animate-liquid-2 z-0" style="background: rgba(var(--accent-rgb), 0.1);"></div>
+
+  <!-- Floating upward bubbles/particles background -->
+  <div class="absolute inset-0 overflow-hidden pointer-events-none z-0">
+    <div class="absolute bottom-0 animate-float-particle w-5 h-5" style="left: 6%; animation-delay: 0s; animation-duration: 15s; filter: blur(3px); background: rgba(var(--primary-rgb), 0.2);"></div>
+    <div class="absolute bottom-0 animate-float-particle w-9 h-9" style="left: 18%; animation-delay: 3s; animation-duration: 22s; filter: blur(3px); background: rgba(var(--accent-rgb), 0.15);"></div>
+    <div class="absolute bottom-0 animate-float-particle w-4 h-4" style="left: 32%; animation-delay: 1s; animation-duration: 18s; filter: blur(3px); background: rgba(var(--primary-rgb), 0.25);"></div>
+    <div class="absolute bottom-0 animate-float-particle w-7 h-7" style="left: 48%; animation-delay: 6s; animation-duration: 25s; filter: blur(3px); background: rgba(var(--accent-rgb), 0.1);"></div>
+    <div class="absolute bottom-0 animate-float-particle w-12 h-12" style="left: 60%; animation-delay: 2s; animation-duration: 21s; filter: blur(3px); background: rgba(var(--primary-rgb), 0.1);"></div>
+    <div class="absolute bottom-0 animate-float-particle w-6 h-6" style="left: 75%; animation-delay: 8s; animation-duration: 24s; filter: blur(3px); background: rgba(var(--accent-rgb), 0.2);"></div>
+    <div class="absolute bottom-0 animate-float-particle w-5 h-5" style="left: 88%; animation-delay: 4s; animation-duration: 16s; filter: blur(3px); background: rgba(var(--primary-rgb), 0.2);"></div>
+    <div class="absolute bottom-0 animate-float-particle w-8 h-8" style="left: 95%; animation-delay: 10s; animation-duration: 19s; filter: blur(3px); background: rgba(var(--primary-rgb), 0.15);"></div>
+  </div>
+
+  <!-- Grid line overlay for techy aesthetic -->
+  <div class="absolute inset-0 bg-[linear-gradient(rgba(0,105,62,0.015)_1px,transparent_1px),linear-gradient(90deg,rgba(0,105,62,0.015)_1px,transparent_1px)] bg-[size:32px_32px] pointer-events-none z-0"></div>
+
+  <!-- HEADER NAVBAR -->
+  <header class="relative z-10 w-full max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between px-6 py-6 gap-4">
+    <div class="flex items-center gap-3">
+      <!-- SkyRise SVG Logo -->
+      <svg width="40" height="40" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" class="flex-shrink-0 filter drop-shadow-[0_2px_8px_rgba(243,186,47,0.15)]">
+        <defs>
+          <linearGradient id="diamondGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#f3ba2f" />
+            <stop offset="50%" stop-color="#0e9f6e" />
+            <stop offset="100%" stop-color="#004d33" />
+          </linearGradient>
+          <linearGradient id="trendlineGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#0e9f6e" />
+            <stop offset="100%" stop-color="#f3ba2f" />
+          </linearGradient>
+        </defs>
+        <path d="M 50 82 C 45 82 22 59 22 54 C 22 49 22 48 22 48 L 30 40 L 50 60 L 70 40 L 78 48 C 78 48 78 49 78 54 C 78 59 55 82 50 82 Z" fill="none" stroke="url(#diamondGrad)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+        <rect class="bar-elem" x="36" y="44" width="4" height="24" rx="2" fill="currentColor" opacity="0.95" />
+        <rect class="bar-elem" x="43" y="36" width="4" height="32" rx="2" fill="currentColor" opacity="0.95" />
+        <rect class="bar-elem" x="50" y="28" width="4" height="40" rx="2" fill="currentColor" opacity="0.95" />
+        <rect class="bar-elem" x="57" y="20" width="4" height="48" rx="2" fill="currentColor" opacity="0.95" />
+        <rect class="bar-elem" x="64" y="12" width="4" height="56" rx="2" fill="currentColor" opacity="0.95" />
+        <path d="M 32 60 L 46 48 L 52 54 L 72 32" stroke="url(#trendlineGrad)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M 64 32 L 73 31 L 72 40" stroke="url(#trendlineGrad)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      </svg>
+      <div class="flex flex-col justify-center select-none">
+        <div class="flex items-center gap-1.5 leading-none">
+          <span class="font-extrabold text-lg tracking-wider uppercase">
+            Sky<span class="text-[#f3ba2f]">Rise</span>
+          </span>
+          <div class="h-2.5 w-2.5 bg-[#f3ba2f] rounded-[2px] rotate-45 animate-[spin_4s_linear_infinite]"></div>
+        </div>
+        <span class="text-[10px] font-bold tracking-[0.25em] text-[#0e9f6e] uppercase mt-0.5 leading-none">— Future —</span>
+      </div>
+    </div>
+
+    <!-- Live Prep / Active Badge -->
+    <div class="flex items-center gap-2.5">
+      <span id="badge-pill" class="border px-3.5 py-1 text-xs font-bold flex items-center gap-1.5 transition-all duration-300 rounded-md bg-emerald-500/10 text-emerald-500 border-emerald-500/20">
+        <span class="h-2 w-2 rounded-full bg-emerald-500 animate-ping"></span>
+        LAUNCH PREPARATION
+      </span>
+    </div>
+  </header>
+
+  <!-- MAIN LAYOUT -->
+  <main class="relative z-10 w-full max-w-7xl mx-auto flex flex-col items-center px-4 text-center mt-4">
+    
+    <!-- LAUNCH BADGE -->
+    <div class="inline-flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/20 rounded-full px-4 py-1.5 mb-6 shadow-sm">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-[#f3ba2f] animate-spin" style="animation-duration: 8s;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.886L4.2 10.8 10.088 12.7 12 18.6l1.912-5.886L19.8 13.2 13.912 11.3z"></path></svg>
+      <span id="badge-text" class="text-xs font-bold uppercase tracking-[0.25em] text-emerald-600 dark:text-emerald-400">
+        Global Launch Countdown
+      </span>
+    </div>
+
+    <!-- PAGE TITLE -->
+    <h1 id="page-title" class="text-3xl sm:text-5xl md:text-7xl font-extrabold tracking-tight leading-[1.1] max-w-4xl mb-4 font-outfit">
+      Next Gen Platform goes <span class="bg-gradient-to-r from-emerald-600 to-emerald-400 bg-clip-text text-transparent font-black">Live Soon</span>
+    </h1>
+    <p class="text-sm sm:text-base md:text-lg text-custom-muted max-w-2xl mx-auto mb-10 leading-relaxed font-medium">
+      SkyRise Future is a global platform offering smart earning opportunities through international business and share market.
+    </p>
+
+    <!-- GLASS TIMER SPHERE CONTAINER -->
+    <div class="relative group p-4 sm:p-8 rounded-[36px] sm:rounded-[48px] bg-custom-card backdrop-blur-xl shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-1 mb-12 flex flex-col items-center justify-center">
+      
+      <!-- Circular SVG Display -->
+      <div class="relative flex items-center justify-center">
+        <!-- Pulsing breathing background orbit rings (Responsive sizes) -->
+        <div class="absolute w-[280px] h-[280px] sm:w-[300px] sm:h-[300px] md:w-[320px] md:h-[320px] rounded-full border border-dashed border-emerald-500/10 breathe-ring-1"></div>
+        <div class="absolute w-[300px] h-[300px] sm:w-[320px] sm:h-[320px] md:w-[340px] md:h-[340px] rounded-full border border-dotted border-amber-500/10 breathe-ring-2"></div>
+
+        <!-- SVG Circular Timer (Responsive sizes) -->
+        <svg viewBox="0 0 200 200" class="w-[250px] h-[250px] sm:w-[270px] sm:h-[270px] md:w-[290px] md:h-[290px] transform -rotate-90 transition-all duration-1000 animate-timer-pulse">
+          <defs>
+            <linearGradient id="timerGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#00e5a0" />
+              <stop offset="50%" stop-color="#00693e" />
+              <stop offset="100%" stop-color="#f3ba2f" />
+            </linearGradient>
+          </defs>
+          <!-- Background tracking circle -->
+          <circle cx="100" cy="100" r="85" fill="none" stroke="currentColor" class="opacity-10" stroke-width="5" />
+          <!-- Active progress ring -->
+          <circle id="progress-ring" cx="100" cy="100" r="85" fill="none" stroke="url(#timerGradient)" stroke-width="6" stroke-dasharray="534.07" stroke-dashoffset="0" stroke-linecap="round" class="transition-all duration-[33ms] ease-linear" />
+          <!-- Glowing Orb Cursor Knob tracking the timer tip -->
+          <circle id="knob" cx="100" cy="15" r="4.5" fill="#f3ba2f" class="filter drop-shadow-[0_0_8px_#f3ba2f]" />
+        </svg>
+
+        <!-- Digital Clock Content (Absolute Center) -->
+        <div id="countdown-container" class="absolute inset-0 flex flex-col items-center justify-center">
+          <span class="text-[10px] font-bold uppercase tracking-[0.25em] text-emerald-600 dark:text-emerald-400">
+            T-Minus
+          </span>
+          
+          <!-- Segmented Display Cards -->
+          <div class="flex gap-2 mt-2">
+            <div class="flex flex-col items-center">
+              <div id="hours-val" class="bg-custom-digit w-11 h-11 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center font-mono font-black text-lg sm:text-2xl shadow-sm">
+                23
+              </div>
+              <span class="text-[8px] font-bold text-custom-muted uppercase tracking-widest mt-1">Hrs</span>
+            </div>
+            <span class="text-lg sm:text-xl font-bold text-[#f3ba2f] align-middle mt-2.5 animate-smooth-blink">:</span>
+            <div class="flex flex-col items-center">
+              <div id="minutes-val" class="bg-custom-digit w-11 h-11 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center font-mono font-black text-lg sm:text-2xl shadow-sm">
+                56
+              </div>
+              <span class="text-[8px] font-bold text-custom-muted uppercase tracking-widest mt-1">Min</span>
+            </div>
+            <span class="text-lg sm:text-xl font-bold text-[#f3ba2f] align-middle mt-2.5 animate-smooth-blink">:</span>
+            <div class="flex flex-col items-center">
+              <div id="seconds-val" class="bg-custom-digit w-11 h-11 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center font-mono font-black text-lg sm:text-2xl shadow-sm">
+                05
+              </div>
+              <span class="text-[8px] font-bold text-custom-muted uppercase tracking-widest mt-1">Sec</span>
+            </div>
+          </div>
+          
+          <!-- Milliseconds Counter -->
+          <div class="flex items-center gap-1.5 mt-3.5 bg-emerald-500/5 px-2.5 py-0.5 rounded-full border border-emerald-500/10">
+            <span class="text-[8px] font-extrabold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest leading-none">
+              Fractional
+            </span>
+            <span id="ms-val" class="font-mono text-xs font-black leading-none border-l border-emerald-500/10 pl-1.5">
+              .85
+            </span>
+          </div>
+        </div>
+
+        <!-- Success content (hidden until live) -->
+        <div id="live-container" class="absolute inset-0 flex-col items-center justify-center hidden">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-[#f3ba2f] animate-bounce mb-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.886L4.2 10.8 10.088 12.7 12 18.6l1.912-5.886L19.8 13.2 13.912 11.3z"></path></svg>
+          <span class="text-xs font-extrabold uppercase tracking-[0.25em] text-emerald-600 dark:text-emerald-400">
+            Launch Success
+          </span>
+          <div class="text-2xl sm:text-3xl font-black mt-1 uppercase tracking-wider animate-pulse">
+            LIVE NOW
+          </div>
+          <span class="text-[9px] font-bold text-custom-muted tracking-widest mt-1">
+            VERSION 1.0.0
+          </span>
+        </div>
+      </div>
+
+      <!-- Audio Ticking Toggle Control -->
+      <button
+        id="sound-btn"
+        onclick="toggleSound()"
+        class="relative z-20 mt-4 px-3.5 py-1.5 text-xs text-emerald-600 dark:text-emerald-400 border border-emerald-500/10 bg-emerald-500/5 hover:bg-emerald-500/10 gap-1.5 rounded-full flex items-center justify-center transition-all cursor-pointer"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="1" y1="1" x2="23" y2="23"></line><path d="M9 9v6a3 3 0 0 0 3 3h1.586l4.707 4.707A1 1 0 0 0 20 22V4a1 1 0 0 0-1.707-.707L13.586 8H12a3 3 0 0 0-3 3z"></path></svg>
+        <span>Sound Off</span>
+      </button>
+    </div>
+
+    <!-- PRIMARY CALL TO ACTION BUTTONS -->
+    <div id="cta-container" class="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-lg w-full mb-16 relative z-20 px-4">
+      <!-- Pre-Live Telegram Button -->
+      <a 
+        href="https://t.me/SkyRiseFuture" 
+        target="_blank" 
+        rel="noopener noreferrer"
+        class="group relative flex items-center gap-3.5 px-6 py-4 bg-custom-card border hover:border-emerald-500/30 rounded-2xl transition-all duration-300 hover:shadow-md hover:-translate-y-0.5 cursor-pointer text-left"
+      >
+        <div class="w-10 h-10 rounded-xl bg-[#229ED9]/10 text-[#229ED9] flex items-center justify-center group-hover:scale-110 transition-transform">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 transform rotate-45" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+        </div>
+        <div>
+          <div class="text-[9px] font-bold text-custom-muted uppercase tracking-wider">Join Community</div>
+          <div class="text-sm font-black">Telegram Channel</div>
+        </div>
+      </a>
+      
+      <!-- Pre-Live WhatsApp Button -->
+      <a 
+        href="https://whatsapp.com/channel/0029VbCfERo1SWswjFBAVt10" 
+        target="_blank" 
+        rel="noopener noreferrer"
+        class="group relative flex items-center gap-3.5 px-6 py-4 bg-custom-card border hover:border-emerald-500/30 rounded-2xl transition-all duration-300 hover:shadow-md hover:-translate-y-0.5 cursor-pointer text-left"
+      >
+        <div class="w-10 h-10 rounded-xl bg-[#25D366]/10 text-[#25D366] flex items-center justify-center group-hover:scale-110 transition-transform">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+        </div>
+        <div>
+          <div class="text-[9px] font-bold text-custom-muted uppercase tracking-wider">Follow updates</div>
+          <div class="text-sm font-black">WhatsApp Channel</div>
+        </div>
+      </a>
+    </div>
+
+    <!-- PLATFORM APP DETAILS GRID -->
+    <div class="w-full max-w-4xl px-2">
+      <div class="text-left mb-6 flex items-center justify-between border-b border-custom pb-3">
+        <h3 class="text-base sm:text-lg font-bold tracking-tight flex items-center gap-2">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-[#f3ba2f]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+          Platform Highlights
+        </h3>
+        <span class="text-xs font-semibold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">
+          Launch Version 1.0
+        </span>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <!-- Highlight Cards -->
+        <div class="relative overflow-hidden border border-custom bg-custom-card rounded-2xl transition-all duration-300 hover:shadow-md hover:-translate-y-1 group">
+          <div class="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-[#00a86b] to-[#f3ba2f] opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+          <div class="p-5 flex flex-col items-center sm:items-start text-center sm:text-left h-full">
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center border border-emerald-500/20 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 mb-3.5 group-hover:scale-110 transition-transform">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>
+            </div>
+            <h4 class="text-sm font-black mb-1.5">Daily ROI Growth</h4>
+            <p class="text-xs text-custom-muted leading-relaxed">1.0% to 2.5% daily compounding yields on active investment plans.</p>
+          </div>
+        </div>
+
+        <div class="relative overflow-hidden border border-custom bg-custom-card rounded-2xl transition-all duration-300 hover:shadow-md hover:-translate-y-1 group">
+          <div class="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-[#00a86b] to-[#f3ba2f] opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+          <div class="p-5 flex flex-col items-center sm:items-start text-center sm:text-left h-full">
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center border border-amber-500/20 bg-amber-500/10 text-[#f3ba2f] mb-3.5 group-hover:scale-110 transition-transform">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>
+            </div>
+            <h4 class="text-sm font-black mb-1.5">Low Minimum Entry</h4>
+            <p class="text-xs text-custom-muted leading-relaxed">Start micro-investments from just $10 with instant automated claims.</p>
+          </div>
+        </div>
+
+        <div class="relative overflow-hidden border border-custom bg-custom-card rounded-2xl transition-all duration-300 hover:shadow-md hover:-translate-y-1 group">
+          <div class="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-[#00a86b] to-[#f3ba2f] opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+          <div class="p-5 flex flex-col items-center sm:items-start text-center sm:text-left h-full">
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center border border-amber-500/20 bg-amber-500/10 text-[#f3ba2f] mb-3.5 group-hover:scale-110 transition-transform">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path></svg>
+            </div>
+            <h4 class="text-sm font-black mb-1.5">VIP Leader Salary</h4>
+            <p class="text-xs text-custom-muted leading-relaxed">Unlock weekly basic pay payouts up to $800/week on achieving ranks.</p>
+          </div>
+        </div>
+
+        <div class="relative overflow-hidden border border-custom bg-custom-card rounded-2xl transition-all duration-300 hover:shadow-md hover:-translate-y-1 group">
+          <div class="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-[#00a86b] to-[#f3ba2f] opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+          <div class="p-5 flex flex-col items-center sm:items-start text-center sm:text-left h-full">
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center border border-emerald-500/20 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 mb-3.5 group-hover:scale-110 transition-transform">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+            </div>
+            <h4 class="text-sm font-black mb-1.5">10-Level Affiliate</h4>
+            <p class="text-xs text-custom-muted leading-relaxed">Build strong lines and earn passive commissions up to 10 lines deep.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TIMELINE SECTION -->
+    <div class="w-full max-w-4xl mt-16 px-2 relative">
+      <div class="text-left mb-6 flex items-center justify-between border-b border-custom pb-3">
+        <h3 class="text-base sm:text-lg font-bold tracking-tight flex items-center gap-2">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-[#f3ba2f]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+          Launch Roadmap
+        </h3>
+        <span class="text-xs font-semibold text-custom-muted">
+          Roadmap Status
+        </span>
+      </div>
+
+      <div class="relative grid grid-cols-1 md:grid-cols-4 gap-6 md:gap-4">
+        <!-- Desktop connecting line -->
+        <div class="hidden md:block absolute top-[22px] left-8 right-8 h-0.5 bg-gray-300 dark:bg-gray-700 z-0"></div>
+        <!-- Mobile vertical connecting line -->
+        <div class="block md:hidden absolute top-6 bottom-6 left-[21px] w-0.5 bg-gray-300 dark:bg-gray-700 z-0"></div>
+        
+        <div class="relative z-10 flex md:flex-col items-start gap-4 md:gap-0 font-medium">
+          <div class="w-11 h-11 rounded-full flex items-center justify-center border font-bold text-xs shrink-0 md:mb-3.5 bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border-emerald-500/40">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><path d="m9 11 2 2 4-4"></path></svg>
+          </div>
+          <div class="text-left md:text-center flex flex-col md:items-center">
+            <div class="text-[10px] font-extrabold uppercase text-custom-muted tracking-widest">Phase 1</div>
+            <h5 class="text-sm font-bold mt-0.5">Smart Contracts Audit</h5>
+            <p class="text-xs text-custom-muted/80 mt-1 leading-normal max-w-[180px]">Security check completed</p>
+          </div>
+        </div>
+
+        <div class="relative z-10 flex md:flex-col items-start gap-4 md:gap-0 font-medium">
+          <div class="w-11 h-11 rounded-full flex items-center justify-center border font-bold text-xs shrink-0 md:mb-3.5 bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border-emerald-500/40">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><path d="m9 11 2 2 4-4"></path></svg>
+          </div>
+          <div class="text-left md:text-center flex flex-col md:items-center">
+            <div class="text-[10px] font-extrabold uppercase text-custom-muted tracking-widest">Phase 2</div>
+            <h5 class="text-sm font-bold mt-0.5">Seed/Private Round</h5>
+            <p class="text-xs text-custom-muted/80 mt-1 leading-normal max-w-[180px]">Funding cap filled successfully</p>
+          </div>
+        </div>
+
+        <div class="relative z-10 flex md:flex-col items-start gap-4 md:gap-0 font-medium">
+          <div id="roadmap-p3-indicator" class="w-11 h-11 rounded-full flex items-center justify-center border font-bold text-xs shrink-0 md:mb-3.5 bg-amber-500/20 text-amber-500 border-amber-500/40 animate-pulse">
+            03
+          </div>
+          <div class="text-left md:text-center flex flex-col md:items-center">
+            <div class="text-[10px] font-extrabold uppercase text-custom-muted tracking-widest">Phase 3</div>
+            <h5 class="text-sm font-bold mt-0.5">Global Countdown</h5>
+            <p id="roadmap-p3-desc" class="text-xs text-custom-muted/80 mt-1 leading-normal max-w-[180px]">Live community countdown actively running</p>
+          </div>
+        </div>
+
+        <div class="relative z-10 flex md:flex-col items-start gap-4 md:gap-0 font-medium">
+          <div id="roadmap-p4-indicator" class="w-11 h-11 rounded-full flex items-center justify-center border font-bold text-xs shrink-0 md:mb-3.5 bg-custom-card text-custom-muted border-custom">
+            04
+          </div>
+          <div class="text-left md:text-center flex flex-col md:items-center">
+            <div class="text-[10px] font-extrabold uppercase text-custom-muted tracking-widest">Phase 4</div>
+            <h5 class="text-sm font-bold mt-0.5">Platform Launch</h5>
+            <p id="roadmap-p4-desc" class="text-xs text-custom-muted/80 mt-1 leading-normal max-w-[180px]">Platform launching globally</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="relative z-10 w-full text-center border-t border-custom mt-16 pt-8 px-6 max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between text-xs text-custom-muted">
+    <div>© <span id="year">2026</span> SkyRise Future. All rights reserved.</div>
+    <div class="flex gap-4 mt-2 sm:mt-0 font-medium">
+      <a href="#" class="hover:text-emerald-500 transition-colors">Privacy Policy</a>
+      <a href="#" class="hover:text-emerald-500 transition-colors">Terms of Service</a>
+      <a href="#" class="hover:text-emerald-500 transition-colors">Risk Warning</a>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById("year").innerText = new Date().getFullYear();
+
+    // Web Audio Synthesis for dynamic clicking tick-tock
+    let audioCtx = null;
+    let isMuted = true;
+
+    function toggleSound() {
+      isMuted = !isMuted;
+      const btn = document.getElementById("sound-btn");
+      if (isMuted) {
+        btn.innerHTML = `
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="1" y1="1" x2="23" y2="23"></line><path d="M9 9v6a3 3 0 0 0 3 3h1.586l4.707 4.707A1 1 0 0 0 20 22V4a1 1 0 0 0-1.707-.707L13.586 8H12a3 3 0 0 0-3 3z"></path></svg>
+          <span>Sound Off</span>
+        `;
+      } else {
+        btn.innerHTML = `
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-emerald-500 animate-bounce" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H2v6h4l5 4V5z"></path><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
+          <span>Sound On</span>
+        `;
+        try {
+          if (!audioCtx) {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+          }
+          if (audioCtx.state === "suspended") {
+            audioCtx.resume();
+          }
+        } catch (e) {}
+      }
+    }
+
+    function playTick(sec) {
+      if (isMuted) return;
+      try {
+        if (!audioCtx) {
+          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioCtx.state === "suspended") {
+          audioCtx.resume();
+        }
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        
+        osc.type = "sine";
+        // Alternating frequencies for tick/tock sound
+        const pitch = sec % 2 === 0 ? 800 : 700;
+        osc.frequency.setValueAtTime(pitch, audioCtx.currentTime);
+        
+        gain.gain.setValueAtTime(0.02, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.04);
+        
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.04);
+      } catch (e) {}
+    }
+
+    // Countdown logic: 24 hours timer
+    const totalDuration = 24 * 60 * 60 * 1000;
+    let targetDate = localStorage.getItem("skyrise_launch_target");
+    
+    if (!targetDate || parseInt(targetDate, 10) <= Date.now()) {
+      targetDate = Date.now() + totalDuration;
+      localStorage.setItem("skyrise_launch_target", targetDate.toString());
+    } else {
+      targetDate = parseInt(targetDate, 10);
+    }
+
+    let lastSec = -1;
+    let intervalId = null;
+
+    function update() {
+      const now = Date.now();
+      const diff = targetDate - now;
+
+      if (diff <= 0) {
+        if (intervalId) {
+          clearInterval(intervalId);
+        }
+        // Show live dashboard components
+        document.getElementById("countdown-container").style.display = "none";
+        document.getElementById("live-container").style.display = "flex";
+        document.getElementById("sound-btn").style.display = "none";
+        document.getElementById("page-title").innerHTML = `SkyRise Future is <span class="bg-gradient-to-r from-emerald-600 via-emerald-400 to-[#f3ba2f] bg-clip-text text-transparent drop-shadow-[0_2px_12px_rgba(0,105,62,0.2)]">Now Live!</span>`;
+        document.getElementById("badge-text").innerText = "SkyRise Future is officially Live";
+        
+        const pill = document.getElementById("badge-pill");
+        pill.innerHTML = `<span class="h-2 w-2 rounded-full bg-emerald-500 animate-ping"></span> SYSTEM LIVE`;
+        
+        // Show actual live entry CTA buttons
+        document.getElementById("cta-container").className = "flex flex-col gap-3.5 max-w-lg w-full mb-16 relative z-20 px-4";
+        document.getElementById("cta-container").innerHTML = `
+          <a href="/" class="w-full bg-primary-gradient hover:opacity-95 text-white font-extrabold text-base sm:text-lg h-14 rounded-full shadow-md flex items-center justify-center gap-1 transform hover:scale-[1.01] active:scale-95 transition-all duration-300 cursor-pointer">
+            Enter SkyRise Platform 
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 animate-pulse" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+          </a>
+          <div class="flex justify-center gap-3 w-full">
+            <a href="/register" class="border border-emerald-500/20 hover:bg-emerald-500/5 text-emerald-600 dark:text-emerald-400 rounded-full h-11 px-6 font-bold flex items-center justify-center cursor-pointer text-xs transition-colors">Create Account</a>
+            <a href="/login" class="border border-emerald-500/20 hover:bg-emerald-500/5 text-emerald-600 dark:text-emerald-400 rounded-full h-11 px-6 font-bold flex items-center justify-center cursor-pointer text-xs transition-colors">Sign In</a>
+          </div>
+          <div class="mt-6 flex justify-center gap-6 border-t border-emerald-500/10 pt-4 w-full">
+            <a href="https://t.me/SkyRiseFuture" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 text-xs text-custom-muted hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors font-bold">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-[#229ED9] transform rotate-45" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+              Telegram Community
+            </a>
+            <a href="https://whatsapp.com/channel/0029VbCfERo1SWswjFBAVt10" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 text-xs text-custom-muted hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors font-bold">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-[#25D366]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+              WhatsApp Channel
+            </a>
+          </div>
+        `;
+        
+        // Update roadmap indicators
+        const r3 = document.getElementById("roadmap-p3-indicator");
+        r3.className = "w-11 h-11 rounded-full flex items-center justify-center border font-bold text-xs shrink-0 md:mb-3.5 bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border-emerald-500/40";
+        r3.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><path d="m9 11 2 2 4-4"></path></svg>`;
+        document.getElementById("roadmap-p3-desc").innerText = "Countdown successfully concluded";
+        
+        const r4 = document.getElementById("roadmap-p4-indicator");
+        r4.className = "w-11 h-11 rounded-full flex items-center justify-center border font-bold text-xs shrink-0 md:mb-3.5 bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border-emerald-500/40";
+        r4.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><path d="m9 11 2 2 4-4"></path></svg>`;
+        document.getElementById("roadmap-p4-desc").innerText = "Full features & dashboard live for all";
+
+        // Full progress ring completion
+        document.getElementById("progress-ring").setAttribute("stroke-dashoffset", 0);
+        document.getElementById("knob").setAttribute("cx", 100);
+        document.getElementById("knob").setAttribute("cy", 15);
+        document.getElementById("knob").setAttribute("r", 6);
+        return;
+      }
+
+      // Format countdown time
+      const hours = Math.floor(diff / (1000 * 60 * 60));
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+      const ms = Math.floor((diff % 1000) / 10);
+
+      document.getElementById("hours-val").innerText = hours.toString().padStart(2, "0");
+      document.getElementById("minutes-val").innerText = minutes.toString().padStart(2, "0");
+      document.getElementById("seconds-val").innerText = seconds.toString().padStart(2, "0");
+      document.getElementById("ms-val").innerText = "." + ms.toString().padStart(2, "0");
+
+      if (seconds !== lastSec) {
+        lastSec = seconds;
+        playTick(seconds);
+      }
+
+      // SVG Circular Progress
+      const radius = 85;
+      const circumference = 2 * Math.PI * radius;
+      const progress = Math.max(0, Math.min(1, diff / totalDuration));
+      const dashOffset = circumference * (1 - progress);
+      document.getElementById("progress-ring").setAttribute("stroke-dashoffset", dashOffset);
+
+      // Knob position
+      const angle = progress * 2 * Math.PI - Math.PI / 2;
+      const knobX = 100 + radius * Math.cos(angle);
+      const knobY = 100 + radius * Math.sin(angle);
+      document.getElementById("knob").setAttribute("cx", knobX);
+      document.getElementById("knob").setAttribute("cy", knobY);
+    }
+
+    // Run clock loop at ~30 FPS
+    intervalId = setInterval(update, 33);
+    update();
+  </script>
+</body>
+</html>
