@@ -36,3 +36,4 @@ Aap is folder ko Vercel pr 2 tareeqon se live kar sakte hain:
 - **Dynamic Transition**: When the timer finishes, it instantly shifts layout to show "SkyRise Future is Live Now" with direct CTA buttons to your main platform.
 - **CSS Animations**: Floating bubbles drifting upwards, morphing backgrounds, glowing rings, and pulsing colons.
 - **Auto Dark/Light Theme**: Adapts to user's system preferences automatically.
+<!-- commit 1 -->
