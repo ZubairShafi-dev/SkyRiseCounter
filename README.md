@@ -37,3 +37,4 @@ Aap is folder ko Vercel pr 2 tareeqon se live kar sakte hain:
 - **CSS Animations**: Floating bubbles drifting upwards, morphing backgrounds, glowing rings, and pulsing colons.
 - **Auto Dark/Light Theme**: Adapts to user's system preferences automatically.
 <!-- commit 1 -->
+<!-- commit 2 -->
